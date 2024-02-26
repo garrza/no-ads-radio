@@ -14,6 +14,3 @@ def get_songs():
     songs = [song.split(" - ") for song in songs]
 
     return songs
-
-
-print(get_songs())
