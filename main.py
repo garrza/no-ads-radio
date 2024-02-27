@@ -2,7 +2,6 @@ import time
 from modules.scraper import get_songs
 from modules.spotify import add_songs_to_playlist
 
-# Interval (in seconds) for fetching and adding songs
 FETCH_INTERVAL = 3600
 
 
@@ -10,9 +9,7 @@ def main():
     while True:
         try:
             songs = get_songs()
-
             add_songs_to_playlist(songs)
-
             print("Songs added to playlist successfully.")
 
         except Exception as e:
