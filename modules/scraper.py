@@ -12,5 +12,4 @@ def get_songs():
     songs = [song.get_text(strip=True) for song in songs]
 
     songs = [song.split(" - ") for song in songs]
-
-    return songs
+    return [song for song in songs if len(song) == 2]
