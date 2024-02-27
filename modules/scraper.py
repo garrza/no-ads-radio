@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-from bs4 import BeautifulSoup
 
 url = "https://onlineradiobox.com/mx/classicfm/playlist/?cs=mx.lamejor977"
 
