@@ -1,3 +1,4 @@
 .env
 .cache-rgarzaa
 .cache
+/__pycache__
