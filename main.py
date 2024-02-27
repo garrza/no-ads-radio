@@ -2,7 +2,7 @@ import time
 from modules.scraper import get_songs
 from modules.spotify import add_songs_to_playlist
 
-FETCH_INTERVAL = 3600
+FETCH_INTERVAL = 20
 
 
 def main():
