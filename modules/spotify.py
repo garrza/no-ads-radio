@@ -35,22 +35,6 @@ def get_song_id(artist, song):
         return None
 
 
-def get_playlist_tracks():
-    track_ids = []
-    if TOKEN:
-        sp = spotipy.Spotify(auth=TOKEN)
-        sp.trace = False
-        playlist = sp.user_playlist(USERNAME, PLAYLIST_ID)
-        for item in playlist["tracks"]["items"]:
-            track = item["track"]
-            track_ids.append(track["id"])
-            print(track["id"])
-    else:
-        print("Can't get token for", USERNAME)
-
-    return track_ids
-
-
 def add_songs_to_playlist(songs):
     if TOKEN:
         sp = spotipy.Spotify(auth=TOKEN)
