@@ -51,13 +51,12 @@ spotify = get_spotify_client()
 
 
 def get_song_id(artist, song):
+    """Search for a song on Spotify and return its ID."""
     results = spotify.search(q=f"artist:{artist} track:{song}", type="track")
     items = results["tracks"]["items"]
     if items:
-        print(items[0]["id"])
         return items[0]["id"]
     else:
-        print(f"No track found for artist: {artist}, song: {song}")
         return None
 
 
@@ -87,20 +86,28 @@ def add_songs_to_playlist(songs):
                         song_id not in current_tracks
                     ):  # Check if the song is not already in the playlist
                         song_ids.append(song_id)
+                        print(f"  ✓ Will add: {artist} - {song}")
                     else:
-                        print(
-                            f"Song '{song}' by '{artist}' is already in the playlist."
-                        )
+                        print(f"  ⊘ Already in playlist: {artist} - {song}")
                 else:
-                    print(f"Song ID not found for {artist} - {song}")
+                    print(f"  ✗ Not found on Spotify: {artist} - {song}")
             else:
                 print(f"Invalid entry: {song_info}")
 
-        while song_ids:
-            sp.user_playlist_add_tracks(USERNAME, PLAYLIST_ID, song_ids[:100])
-            song_ids = song_ids[100:]
-
-        print(f"Added {len(song_ids)} new song(s) to the playlist.")
+        # Add songs to playlist in batches of 100 (Spotify API limit)
+        total_added = len(song_ids)
+        if total_added > 0:
+            print(f"\nAdding {total_added} new song(s) to playlist...")
+            batch_num = 0
+            while song_ids:
+                batch = song_ids[:100]
+                sp.user_playlist_add_tracks(USERNAME, PLAYLIST_ID, batch)
+                batch_num += 1
+                print(f"  Added batch {batch_num} ({len(batch)} songs)")
+                song_ids = song_ids[100:]
+            print(f"✓ Successfully added {total_added} song(s) to the playlist!")
+        else:
+            print("No new songs to add (all songs already in playlist).")
     except Exception as e:
         print(f"Error adding songs to playlist: {str(e)}")
         raise
