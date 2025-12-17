@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-url = "https://onlineradiobox.com/mx/classicfm/playlist/?cs=mx.lamejor977"
+url = "https://onlineradiobox.com/mx/classicfm/?cs=mx.classicfm"
 
 
 def get_songs():
