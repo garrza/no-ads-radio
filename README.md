@@ -28,7 +28,6 @@ This project is an automated bot built using Python, the Spotify API, and web sc
 
 1. Set up your Spotify Developer account and obtain API credentials.
 2. Configure the bot with your Spotify API credentials and the URL of the radio station.
-3. Deploy the bot to Google Cloud Functions.
 4. Set up a scheduled HTTP call to trigger the bot every 60 minutes.
 
 ## Configuration
