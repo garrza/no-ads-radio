@@ -1,7 +1,6 @@
 import os
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-import spotipy.util as util
+from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,18 +9,20 @@ CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")
 USERNAME = os.getenv("SPOTIFY_USERNAME")
 PLAYLIST_ID = os.getenv("SPOTIFY_PLAYLIST_ID")
+REFRESH_TOKEN = os.getenv("SPOTIFY_REFRESH_TOKEN")
 SCOPE = "playlist-modify-public"
-TOKEN = util.prompt_for_user_token(
-    username=USERNAME,
-    scope=SCOPE,
+
+# Initialize Spotify client with OAuth for non-interactive authentication
+auth_manager = SpotifyOAuth(
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
     redirect_uri=REDIRECT_URI,
+    scope=SCOPE,
+    open_browser=False,
 )
 
-spotify = spotipy.Spotify(
-    client_credentials_manager=SpotifyClientCredentials(CLIENT_ID, CLIENT_SECRET)
-)
+# Create a Spotify client for searching (doesn't need user auth)
+spotify = spotipy.Spotify(auth_manager=auth_manager)
 
 
 def get_song_id(artist, song):
@@ -36,8 +37,9 @@ def get_song_id(artist, song):
 
 
 def add_songs_to_playlist(songs):
-    if TOKEN:
-        sp = spotipy.Spotify(auth=TOKEN)
+    try:
+        # Create authenticated Spotify client
+        sp = spotipy.Spotify(auth_manager=auth_manager)
         sp.trace = False
 
         # Get the current track IDs in the playlist
@@ -72,5 +74,8 @@ def add_songs_to_playlist(songs):
         while song_ids:
             sp.user_playlist_add_tracks(USERNAME, PLAYLIST_ID, song_ids[:100])
             song_ids = song_ids[100:]
-    else:
-        print("Can't get token for", USERNAME)
+
+        print(f"Added {len(song_ids)} new song(s) to the playlist.")
+    except Exception as e:
+        print(f"Error adding songs to playlist: {str(e)}")
+        raise
