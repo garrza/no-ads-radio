@@ -2,8 +2,8 @@ name: Update Spotify Playlist
 
 on:
   schedule:
-    # Run every hour at minute 0
-    - cron: "0 * * * *"
+    # Run daily at 11:30 PM Monterrey time (5:30 AM UTC / UTC-6)
+    - cron: "30 5 * * *"
   workflow_dispatch: # Allow manual triggering from GitHub UI
 
 jobs:
