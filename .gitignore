@@ -35,6 +35,7 @@ env/
 
 # Spotify cache files
 .cache-*
+.spotify_cache
 
 # IDE
 .vscode/

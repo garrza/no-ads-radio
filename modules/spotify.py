@@ -1,4 +1,5 @@
 import os
+import json
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
@@ -12,17 +13,41 @@ PLAYLIST_ID = os.getenv("SPOTIFY_PLAYLIST_ID")
 REFRESH_TOKEN = os.getenv("SPOTIFY_REFRESH_TOKEN")
 SCOPE = "playlist-modify-public"
 
-# Initialize Spotify client with OAuth for non-interactive authentication
-auth_manager = SpotifyOAuth(
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET,
-    redirect_uri=REDIRECT_URI,
-    scope=SCOPE,
-    open_browser=False,
-)
 
-# Create a Spotify client for searching (doesn't need user auth)
-spotify = spotipy.Spotify(auth_manager=auth_manager)
+def get_spotify_client():
+    """
+    Create a Spotify client with proper authentication.
+    Uses refresh token for non-interactive authentication in CI/CD environments.
+    """
+    # Create auth manager
+    auth_manager = SpotifyOAuth(
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        redirect_uri=REDIRECT_URI,
+        scope=SCOPE,
+        open_browser=False,
+        cache_path=".spotify_cache",
+    )
+
+    # If we have a refresh token, create a cache file with it
+    if REFRESH_TOKEN:
+        token_info = {
+            "access_token": "",  # Will be refreshed
+            "token_type": "Bearer",
+            "expires_in": 3600,
+            "scope": SCOPE,
+            "expires_at": 0,  # Force refresh
+            "refresh_token": REFRESH_TOKEN,
+        }
+        # Write to cache file
+        with open(".spotify_cache", "w") as f:
+            json.dump(token_info, f)
+
+    return spotipy.Spotify(auth_manager=auth_manager)
+
+
+# Create a Spotify client for searching (uses the same auth)
+spotify = get_spotify_client()
 
 
 def get_song_id(artist, song):
@@ -39,7 +64,7 @@ def get_song_id(artist, song):
 def add_songs_to_playlist(songs):
     try:
         # Create authenticated Spotify client
-        sp = spotipy.Spotify(auth_manager=auth_manager)
+        sp = get_spotify_client()
         sp.trace = False
 
         # Get the current track IDs in the playlist
