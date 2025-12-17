@@ -6,7 +6,7 @@ This project is an automated bot built using Python, the Spotify API, and web sc
 
 - Automatically fetches songs from a local radio station.
 - Adds fetched songs to a Spotify playlist.
-- Hosted on Google Cloud Functions for scalability and easy management.
+- Hosted locally
 - Scheduled HTTP calls ensure that the playlist stays updated every 60 minutes.
 
 ## Installation
